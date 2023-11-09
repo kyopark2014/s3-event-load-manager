@@ -27,10 +27,11 @@ def lambda_handler(event, context):
         eventTimestamp = jsonbody['event_timestamp']
         print("eventTimestamp: ", eventTimestamp)
 
-        bucketName = jsonbody['event_body']['bucketName']
+        messageBody = json.loads(jsonbody['event_body'])
+        bucketName = messageBody['bucketName']
         print("bucketName: ", bucketName)
 
-        key = jsonbody['event_body']['key']
+        key = messageBody['key']
         print("key: ", key)
 
         # delete queue
