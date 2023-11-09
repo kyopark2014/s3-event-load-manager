@@ -50,7 +50,7 @@ for record in event['Records']:
   key = s3['object']['key']
 ```
 
-아래에서는 편의상 event ID로 uuid를 사용하고, timestamp를 지정하였습니다. 각 event의 body에는 object에 정보인 bucket과 key를 입력하고 SQS(S3-event)를 메시지로 넣습니다.
+아래에서는 편의상 event ID로 uuid를 사용하고, timestamp를 지정하였습니다. 각 event의 body에는 object에 정보인 bucket과 key를 입력하고 SQS(S3-event)에 메시지로 넣습니다.
 
 ```python
 eventId = str(uuid.uuid1())
@@ -82,7 +82,7 @@ try:
 
 [Lambda (schedular)](./lambda-schedular/lambda_function.py) 는 EventBrdige의 trigger를 받아서, SQS(event)로 부터 N개의 처리 가능한 수량의 메시지를 읽어서, SQS(Invocation)에 전달합니다. EventBridge가 Lambda(schedular)를 trigger하면 아래와 같이 receive_message를 이용하여 10개씩 메시지를 읽어옵니다. 참고로 receive_message()가 한번에 읽어올수 있는 메시지는 최대 10개입니다.
 
-EventBridge가 처리할 수 있는 job의 갯수를 capacity라고 정의하였습니다. 아래와 같이 receive_message()를 이용하여 SQS(invoke)에서 메시지를 읽어오는데, 읽어온 메시지의 전체 숫자가 capacity보다 크다면 읽어오는 동작을 멈춥니다. 만약 읽어온 메시지의 숫자가 capacity보다 작다면, SQS(event)에서 10개씩 메시지를 읽어서 SQS(invokation)에 push합니다. SQS(event)에 더이상 메시지 없으면 읽어오는 동작을 멈춥니다.
+EventBridge가 처리할 수 있는 job의 갯수를 capacity라고 정의하였습니다. 아래와 같이 receive_message()를 이용하여 SQS(invoke)에서 메시지를 읽어오는데, 읽어온 메시지의 전체 숫자가 capacity보다 크다면 읽어오는 동작을 멈춥니다. 만약 읽어온 메시지의 숫자가 capacity보다 작다면, SQS(event)에서 10개씩 메시지를 읽어서 SQS(invokation)에 push합니다. 
 
 ```python
 while True:
@@ -100,7 +100,7 @@ while True:
                 break
 ```
 
-읽어들인 메시지는 SQS(invokation)으로 push하고 SQS(event)의 메시지는 삭제합니다.
+읽어들인 메시지는 SQS(invokation)으로 push하고 SQS(event)의 메시지는 삭제합니다. 메시지를 성공적으로 읽어오면, 메시지 숫자(cnt)를 증가시킵니다.
 
 ```python
 for message in sqsReceiveResponse.get("Messages", []):
@@ -110,12 +110,13 @@ for message in sqsReceiveResponse.get("Messages", []):
     jsonbody = json.loads(message_body)
     try:
         sqs_client.send_message(
-        QueueUrl = invocationSqsUrl,
-        MessageAttributes = {},
-        MessageDeduplicationId = jsonbody['event_id'],
-        MessageGroupId = "invokation",
-        MessageBody = message_body
-    )
+            QueueUrl = invocationSqsUrl,
+            MessageAttributes = {},
+            MessageDeduplicationId = jsonbody['event_id'],
+            MessageGroupId = "invokation",
+            MessageBody = message_body
+        )
+        cnt = cnt+1
     except Exception as e:
         print('Fail to push the queue message: ', e)
 
@@ -128,6 +129,28 @@ for message in sqsReceiveResponse.get("Messages", []):
             print('Fail to delete the queue message: ', e)
 ```
 
+### Lambda(invoke)에서 메시지 읽어오기
+
+Lambda(invoke)는 SQS(invokation)이 전달해온 event에서 bucket의 이름과 key를 추출하여 이용합니다.
+
+```python
+def lambda_handler(event, context):
+    for record in event['Records']:
+        receiptHandle = record['receiptHandle']
+        body = record['body']
+
+        jsonbody = json.loads(body)
+        eventId = jsonbody['event_id']
+        eventTimestamp = jsonbody['event_timestamp']
+        messageBody = json.loads(jsonbody['event_body'])        
+        bucketName = messageBody['bucket_name']
+        key = messageBody['key']
+
+        try:
+            sqs.delete_message(QueueUrl=sqsUrl, ReceiptHandle=receiptHandle)
+        except Exception as e:        
+            print('Fail to delete the queue message: ', e)
+```
 
 ## 인프라 설치
 
