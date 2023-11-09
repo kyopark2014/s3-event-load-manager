@@ -106,7 +106,6 @@ SQS(event)에 아래와 같이 13:14분에 115개의 메시지가 수신되었�
 ㄴ
 ![image](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/cac72a09-95ff-499e-b60d-1fa307d2b13b)
 
-SQS(invokation)에서 Lambda로 보낸 메시지는 아래와 같이 전달됩니다.
+SQS(invokation)에서 Lambda(invoke)로 전달된 메시지는 아래와 같이 3번에 나누어서 전달되었습니다.
 
-![image](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/8c1c7190-db09-4bbc-8bb6-32c97fc209c3)
-
+![image](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/fbaa52ed-ee15-4675-b379-d7ffaca274a9)
