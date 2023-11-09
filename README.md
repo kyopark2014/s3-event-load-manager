@@ -2,7 +2,11 @@
 
 여기서는 S3를 통해 들어오는 다수의 트래픽의 로드를 분산하기 위한 간단한 Load Manager를 보여주고자 합니다. 이때의 전체적인 Architecture는 아래와 같습니다. 여기서 EventBridge는 일정시간 간격으로 Load Mananaging을 수행하는 Lambda를 호출합니다. Lambda는 SQS에서 처리가능한 수량의 Event를 가져와서 Serving을 위한 SQS에 옮겨 놓습니다. Serving SQS르 들어온 Event은 Step Functions에 순차적으로 전달됩니다.
 
-<img width="806" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/81efa92b-ac45-404b-8fd4-f24d61987341">
+<img width="806" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/d2f1c58e-9abf-443d-a82b-56d3e27ace1f">
+
+기본적인 Call Flow는 아래와 같습니다.
+
+![image](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/1ad4ad93-72b2-4928-a38c-be78426023a7)
 
 
 ## Load Manager가 필요한 이유
@@ -16,11 +20,8 @@ Load Manager를 사용하지 않은 일반적은 경우의 트래픽 처리는 �
 
 이러한 event driven architecture는 유연한 시스템을 구성하는데 많은 도움을 주지만, 실제 프로세싱을 하는 Step Function으로 인입되는 트래픽을 정밀하게 제어하기 어렵습니다. 예를 들면, S3로 인입되는 다수의 Data 처리를 한꺼번에 Step Function에서 처리할 수 없는 경우에 50개 또는 100개 단위로 5분간격으로 처리하고자 한다면, 스케줄러를 이용하여야 합니다.
 
-<img width="659" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/bb65d6bc-e2ce-4a28-ab58-5dfae0731f82">
+![image](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/47f9174e-e7a7-4a59-90f2-1d58ee322fa8)
 
-기본적인 Call Flow는 아래와 같습니다.
-
-![image](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/1ad4ad93-72b2-4928-a38c-be78426023a7)
 
 
 ## Load Manager를 사용하는 경우
