@@ -83,7 +83,7 @@ try:
 
 [Lambda (schedular)](./lambda-schedular/lambda_function.py) 는 EventBrdige의 trigger를 받아서, SQS(event)로 부터 N개의 처리 가능한 수량의 메시지를 읽어서, SQS(Invocation)에 전달합니다. EventBridge가 Lambda(schedular)를 trigger하면 아래와 같이 [SQS의 receive_message()](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/sqs/client/receive_message.html)를 이용하여 10개씩 메시지를 읽어옵니다. 참고로 receive_message()가 한번에 읽어올수 있는 메시지는 최대 10개입니다.
 
-EventBridge가 처리할 수 있는 job의 갯수를 capacity라고 정의하였습니다. 아래와 같이 [receive_message()](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/sqs/client/receive_message.html)를 이용하여 SQS(invoke)에서 메시지를 읽어오는데, 읽어온 메시지의 전체 숫자가 capacity보다 크다면 읽어오는 동작을 멈춥니다. 만약 읽어온 메시지의 숫자가 capacity보다 작다면, SQS(event)에서 10개씩 메시지를 읽어서 SQS(invokation)에 push합니다. 
+EventBridge가 처리할 수 있는 job의 갯수(N)를 capacity라고 정의하였습니다. 아래와 같이 [receive_message()](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/sqs/client/receive_message.html)를 이용하여 SQS(invoke)에서 메시지를 읽어오는데, 읽어온 메시지의 전체 숫자가 capacity보다 크다면 읽어오는 동작을 멈춥니다. 만약 읽어온 메시지의 숫자가 capacity보다 작다면, SQS(event)에서 10개씩 메시지를 읽어서 SQS(invokation)에 push합니다. 
 
 ```python
 while True:
