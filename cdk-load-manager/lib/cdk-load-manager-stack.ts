@@ -59,7 +59,7 @@ export class CdkLoadManagerStack extends cdk.Stack {
 
     // SQS for Invokation 
     const queueInvokation = new sqs.Queue(this, 'queueInvocation', {
-      visibilityTimeout: cdk.Duration.seconds(30),
+      visibilityTimeout: cdk.Duration.seconds(120),
       queueName: "queue-Invocation.fifo",
       fifo: true,
       contentBasedDeduplication: false,
