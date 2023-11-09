@@ -19,7 +19,7 @@
 <img width="800" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/9dd23b6a-7c92-4302-86c2-fd99fdf90067">
 
 
-## Load Manager가 필요한 이유
+## Load Manager(Schedular)가 필요한 이유
 
 Load Manager를 사용하지 않은 일반적은 경우의 트래픽 처리는 아래와 같습니다. 
 
@@ -34,7 +34,7 @@ Load Manager를 사용하지 않은 일반적은 경우의 트래픽 처리는 �
 
 
 
-## Load Manager를 사용하는 경우
+## Load Manager(Schedular)를 사용하는 경우
 
 ### S3 Event의 처리 
 
