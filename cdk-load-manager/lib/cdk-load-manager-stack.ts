@@ -7,9 +7,9 @@ import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import * as path from "path";
 import * as logs from "aws-cdk-lib/aws-logs"
 import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
-import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as events from 'aws-cdk-lib/aws-events';
 import * as targets from 'aws-cdk-lib/aws-events-targets';
+import * as iam from 'aws-cdk-lib/aws-iam';
 
 const debug = false;
 const projectName = "s3-event-manager"
@@ -73,6 +73,22 @@ export class CdkLoadManagerStack extends cdk.Stack {
       });
     }
 
+    const roleLambda = new iam.Role(this, `role-lambda-for-${projectName}`, {
+      roleName: `role-lambda-${projectName}-${region}`,
+      assumedBy: new iam.CompositePrincipal(
+        new iam.ServicePrincipal("lambda.amazonaws.com"),
+      )
+    });
+    const sqsPolicy = new iam.PolicyStatement({  
+      resources: ['*'],      
+      actions: ['sqs:*'],
+    });      
+    roleLambda.attachInlinePolicy( 
+      new iam.Policy(this, `lambda-inline-policy-for-${projectName}`, {
+        statements: [sqsPolicy],
+      }),
+    ); 
+
     // Lambda for s3 event
     const lambdaS3event = new lambda.Function(this, `lambda-s3-event-for-${projectName}`, {
       description: 'lambda for s3 event',
@@ -81,6 +97,7 @@ export class CdkLoadManagerStack extends cdk.Stack {
       runtime: lambda.Runtime.PYTHON_3_11,
       code: lambda.Code.fromAsset(path.join(__dirname, '../../lambda-s3-event')),
       timeout: cdk.Duration.seconds(120),
+      role: roleLambda,
       logRetention: logs.RetentionDays.ONE_DAY,
       environment: {
         queueS3event: queueS3event.queueUrl
