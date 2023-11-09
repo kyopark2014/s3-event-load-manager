@@ -75,22 +75,6 @@ export class CdkLoadManagerStack extends cdk.Stack {
       });
     }
 
-    const roleLambda = new iam.Role(this, `role-lambda-for-${projectName}`, {
-      roleName: `role-lambda-${projectName}-${region}`,
-      assumedBy: new iam.CompositePrincipal(
-        new iam.ServicePrincipal("lambda.amazonaws.com"),
-      )
-    });
-    const sqsPolicy = new iam.PolicyStatement({  
-      resources: ['*'],      
-      actions: ['sqs:*'],
-    });      
-    roleLambda.attachInlinePolicy( 
-      new iam.Policy(this, `lambda-inline-policy-for-${projectName}`, {
-        statements: [sqsPolicy],
-      }),
-    ); 
-
     // Lambda for s3 event
     const lambdaS3event = new lambda.Function(this, `lambda-s3-event-for-${projectName}`, {
       description: 'lambda for s3 event',
@@ -124,7 +108,6 @@ export class CdkLoadManagerStack extends cdk.Stack {
       functionName: `lambda-schedular-for-${projectName}`,
       handler: 'lambda_function.lambda_handler',
       runtime: lambda.Runtime.PYTHON_3_11,
-      role: roleLambda,
       code: lambda.Code.fromAsset(path.join(__dirname, '../../lambda-schedular')),
       timeout: cdk.Duration.seconds(120),
       logRetention: logs.RetentionDays.ONE_DAY,
