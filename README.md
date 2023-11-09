@@ -100,3 +100,13 @@ aws s3 cp ~/environment/data/ s3://storage-for-s3-event-manager/data/ --recursiv
 ```
 
 이후 CloudWatch에서 메시지가 순차적으로 처리되고 있는지 확인합니다.
+
+
+SQS(event)에 아래와 같이 13:14분에 115개의 메시지가 수신되었습니다. 
+ㄴ
+![image](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/cac72a09-95ff-499e-b60d-1fa307d2b13b)
+
+SQS(invokation)에서 Lambda로 보낸 메시지는 아래와 같이 전달됩니다.
+
+![image](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/8c1c7190-db09-4bbc-8bb6-32c97fc209c3)
+
