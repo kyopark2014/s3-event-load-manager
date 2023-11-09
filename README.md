@@ -22,12 +22,12 @@
 
 Load Manager를 사용하지 않은 일반적은 경우의 트래픽 처리는 아래와 같습니다. 
 
-1) S3를 통해 다수의 파일들인 인입됩니다.
-2) S3의 Object가 인입될때 발생하는 put evnet를 Lambda (S3-event)가 받아서, Object에 대한 bucket, key에 대한 정보를 추출합니다.
-3) AWS StepFunctions의 처리 속도와 입력되는 데이터 속도를 맞추기 위하여 SQS에 S3 Object에 대한 정보를 저장합니다.
-4) Lambda(Inovoke)는 SQS에서 event를 받아서 Step Functions에 전달합니다.
+1) S3를 통해 다수의 파일들이 인입됩니다.
+2) S3의 Object가 인입될때 발생하는 put evnet를 Lambda(S3-event)가 받아서, Object에 대한 bucket, key에 대한 정보를 추출합니다.
+3) AWS StepFunctions의 처리 속도와 입력되는 데이터 속도를 맞추기 위하여 SQS를 이용합니다. SQS에는 S3 Object에 대한 정보가 저장됩니다.
+4) Lambda(Inovoke)는 SQS에서 event를 받아서 Step Functions를 실행합니다.
 
-이러한 event driven architecture는 유연한 시스템을 구성하는데 많은 도움을 주지만, 실제 프로세싱을 하는 Step Function으로 인입되는 트래픽을 정밀하게 제어하기 어렵습니다. 예를 들면, S3로 인입되는 다수의 Data 처리를 한꺼번에 Step Function에서 처리할 수 없는 경우에 50개 또는 100개 단위로 5분간격으로 처리하고자 한다면, 스케줄러를 이용하여야 합니다.
+이러한 event driven architecture는 유연한 시스템을 구성하는데 많은 도움을 주지만, 프로세싱을 하는 Step Function으로 인입되는 트래픽을 정밀하게 제어하기 어렵습니다. 예를 들면, S3로 인입되는 다수의 Data 처리를 한꺼번에 Step Functions에서 처리할 수 없는 경우에 50개 또는 100개 단위로 1분간격으로 처리하고자 한다면, 스케줄러를 이용하여야 합니다.
 
 <img width="700" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/47f9174e-e7a7-4a59-90f2-1d58ee322fa8">
 
