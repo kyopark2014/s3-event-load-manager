@@ -26,7 +26,7 @@ def lambda_handler(event, context):
             number_of_message = len(sqsReceiveResponse.get('Messages', []))
             print(f"Number of messages received: {number_of_message}")
 
-            if number_of_message ==0:
+            if number_of_message==0:
                 break
             
             for message in sqsReceiveResponse.get("Messages", []):
@@ -40,13 +40,14 @@ def lambda_handler(event, context):
 
                 jsonbody = json.loads(message_body)
                 print("event_id: ", jsonbody['event_id'])
-                # push to SQS
+
+                # push to SQS (invokation)
                 try:
                     sqs_client.send_message(
                         QueueUrl=invocationSqsUrl, 
                         MessageAttributes={},
                         MessageDeduplicationId=jsonbody['event_id'],
-                        MessageGroupId="putEvent",
+                        MessageGroupId="invokation",
                         MessageBody=message_body
                     )
                     cnt = cnt+1

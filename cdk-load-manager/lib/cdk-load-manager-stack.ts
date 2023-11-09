@@ -46,16 +46,16 @@ export class CdkLoadManagerStack extends cdk.Stack {
     // SQS for S3 event
     const queueS3event = new sqs.Queue(this, 'queueS3event', {
       visibilityTimeout: cdk.Duration.seconds(120),
-      queueName: "queue-s3-putEvent.fifo",
+      queueName: "queue-s3-event.fifo",
       fifo: true,
       contentBasedDeduplication: false,
       deliveryDelay: cdk.Duration.millis(0),
       retentionPeriod: cdk.Duration.days(2),
     });
     if (debug) {
-      new cdk.CfnOutput(this, 'sqsS3PutEventUrl', {
+      new cdk.CfnOutput(this, 'sqsS3EventUrl', {
         value: queueS3event.queueUrl,
-        description: 'The url of the S3 putEvent Queue',
+        description: 'The url of the S3 Event Queue',
       });
     }
 
@@ -89,10 +89,10 @@ export class CdkLoadManagerStack extends cdk.Stack {
       }
     });
     // s3Bucket.grantReadWrite(lambdaS3event); // permission for s3
-    queueS3event.grantSendMessages(lambdaS3event); // permision for SQS putEvent
+    queueS3event.grantSendMessages(lambdaS3event); // permision for SQS Event
     
     // s3 put event source
-    const s3PutEventSource = new lambdaEventSources.S3EventSource(s3Bucket, {
+    const s3EventSource = new lambdaEventSources.S3EventSource(s3Bucket, {
       events: [
         s3.EventType.OBJECT_CREATED_PUT,
       ],
@@ -100,7 +100,7 @@ export class CdkLoadManagerStack extends cdk.Stack {
         { prefix: 'data/' },
       ]
     });
-    lambdaS3event.addEventSource(s3PutEventSource);        
+    lambdaS3event.addEventSource(s3EventSource);        
 
     // Lambda for schedular
     const lambdaSchedular = new lambda.Function(this, `lambda-schedular-${projectName}`, {
