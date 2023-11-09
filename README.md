@@ -98,8 +98,8 @@ while True:
         )
             
         number_of_message = len(sqsReceiveResponse.get('Messages', []))
-            if number_of_message==0:
-                break
+        if number_of_message==0:
+            break
 ```
 
 읽어들인 메시지는 SQS(invokation)으로 push하고 SQS(event)의 메시지는 삭제합니다. 메시지를 성공적으로 읽어오면, 메시지 숫자(cnt)를 증가시킵니다.
