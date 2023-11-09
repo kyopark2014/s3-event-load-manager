@@ -17,7 +17,7 @@
 !includeurl AWSPuml/MachineLearning/SageMaker.puml
 !includeurl AWSPuml/MachineLearning/Kendra.puml
 !includeurl AWSPuml/ApplicationIntegration/EventBridge.puml
-'!includeurl AWSPuml/Containers/ElasticKubernetesService.puml
+!includeurl AWSPuml/ApplicationIntegration/StepFunctions.puml
 
 'Comment out to use default PlantUML sequence formatting
 skinparam participant {
@@ -27,34 +27,32 @@ skinparam participant {
 'Hide the bottom boxes
 hide footbox
 
-participant "<color:#blue><$ElasticKubernetesService></color>\nEKS" as eks
+participant "<color:#D86613><$ElasticKubernetesService></color>\nEKS" as eks
 participant "<color:#green><$SimpleStorageServiceS3></color>\nAmazon S3" as s3
 participant "<color:#D86613><$Lambda></color>\nAmazon Lambda\n(S3-event)" as lambda_s3
-participant "<color:#blue><$DynamoDB></color>\nDynamoDB" as dynamodb
+participant "<color:#red><$SQS></color>\nAmazon SQS" as sqs_event
 participant "<color:#red><$EventBridge></color>\nAmazon EventBrdige" as event_bridge
 participant "<color:#D86613><$Lambda></color>\nAmazon Lambda\n(schedular)" as lambda_schedular
-participant "<color:#red><$SQS></color>\nAmazon SQS" as sqs
+participant "<color:#red><$SQS></color>\nAmazon SQS" as sqs_invoke
 participant "<color:#D86613><$Lambda></color>\nAmazon Lambda\n(invoke)" as lambda_invoke
 participant "<color:#red><$StepFunctions></color>\nAWS StepFunctions" as step_function
 
 eks -> s3 : Push Objejcts
 
-
 s3 -> lambda_s3 : Put Event
 
-lambda_s3 -> dynamodb : event info
+lambda_s3 -> sqs_event : event info
 
-event_bridge -> lambda_schedular:  trigger periodically
+event_bridge -> lambda_schedular ++:  trigger periodically
 
+lambda_schedular -> sqs_event ++: load message
 
-lambda_schedular -> dynamodb ++: load events
+sqs_event -> lambda_schedular --: event 
 
-dynamodb -> lambda_schedular --
+lambda_schedular -> sqs_invoke --: push event
 
-lambda_schedular -> sqs: push events
+sqs_invoke -> lambda_invoke ++: event
 
-sqs -> lambda_invoke: events
-
-lambda_invoke -> step_function: invoke operation
+lambda_invoke -> step_function --: invoke operation
 
 @enduml

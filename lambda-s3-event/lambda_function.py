@@ -48,7 +48,7 @@ def lambda_handler(event, context):
             )
 
         except Exception as e:        
-            print('Fail to delete the queue message: ', e)
+            print('Fail to push the queue message: ', e)
         
         s3eventInfo.append({
             'bucketName': bucketName,
