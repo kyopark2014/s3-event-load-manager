@@ -2,7 +2,7 @@
 
 여기서는 S3를 통해 들어오는 다수의 트래픽의 로드를 분산하기 위한 간단한 Load Manager를 보여주고자 합니다. 이때의 전체적인 Architecture는 아래와 같습니다. 여기서 EventBridge는 Load 분산을 위하여 일정시간 간격으로 Lambda(schedular)를 호출합니다. Lambda(schedular)는 SQS(event)에서 Step Functions가 한번에 처리가능한 수량의 Event를 가져와서 SQS(invokation)에 옮겨 놓습니다. SQS(invokation)로 들어온 Event은 Lambda(invoke)에 전달되어, Step Functions에 순차적으로 실행하게 됩니다.
 
-<img width="806" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/d2f1c58e-9abf-443d-a82b-56d3e27ace1f">
+<img width="800" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/d2f1c58e-9abf-443d-a82b-56d3e27ace1f">
 
 이때의 Call Flow는 아래와 같습니다.
 
@@ -15,7 +15,7 @@
 7) SQS(invocation)가 Lambda(invoke)를 trigger합니다.
 8) Lambda(Inovoke)는 Step Functions을 실행해야 Job을 수행합니다.
    
-<img width="806" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/9dd23b6a-7c92-4302-86c2-fd99fdf90067">
+<img width="800" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/9dd23b6a-7c92-4302-86c2-fd99fdf90067">
 
 
 ## Load Manager가 필요한 이유
@@ -29,7 +29,7 @@ Load Manager를 사용하지 않은 일반적은 경우의 트래픽 처리는 �
 
 이러한 event driven architecture는 유연한 시스템을 구성하는데 많은 도움을 주지만, 실제 프로세싱을 하는 Step Function으로 인입되는 트래픽을 정밀하게 제어하기 어렵습니다. 예를 들면, S3로 인입되는 다수의 Data 처리를 한꺼번에 Step Function에서 처리할 수 없는 경우에 50개 또는 100개 단위로 5분간격으로 처리하고자 한다면, 스케줄러를 이용하여야 합니다.
 
-<img width="806" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/47f9174e-e7a7-4a59-90f2-1d58ee322fa8">
+<img width="700" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/47f9174e-e7a7-4a59-90f2-1d58ee322fa8">
 
 
 
@@ -80,7 +80,54 @@ try:
 
 ### Event Schedular
 
-[Lambda (schedular)](./lambda-schedular/lambda_function.py) 는 EventBrdige의 Trigger를 받아서, SQS(S3-event)로 부터 N개의 처리 가능한 수량의 메시지를 읽어서, SQS(Invocation)에 전달합니다.
+[Lambda (schedular)](./lambda-schedular/lambda_function.py) 는 EventBrdige의 trigger를 받아서, SQS(event)로 부터 N개의 처리 가능한 수량의 메시지를 읽어서, SQS(Invocation)에 전달합니다. EventBridge가 Lambda(schedular)를 trigger하면 아래와 같이 receive_message를 이용하여 10개씩 메시지를 읽어옵니다. 참고로 receive_message()가 한번에 읽어올수 있는 메시지는 최대 10개입니다.
+
+EventBridge가 처리할 수 있는 job의 갯수를 capacity라고 정의하였습니다. 아래와 같이 receive_message()를 이용하여 SQS(invoke)에서 메시지를 읽어오는데, 읽어온 메시지의 전체 숫자가 capacity보다 크다면 읽어오는 동작을 멈춥니다. 만약 읽어온 메시지의 숫자가 capacity보다 작다면, SQS(event)에서 10개씩 메시지를 읽어서 SQS(invokation)에 push합니다. SQS(event)에 더이상 메시지 없으면 읽어오는 동작을 멈춥니다.
+
+```python
+while True:
+    if cnt > capacity:
+        break
+
+    try:               
+        sqsReceiveResponse = sqs_client.receive_message(
+            QueueUrl=eventSqsUrl,
+            MaxNumberOfMessages=10,
+        )
+            
+        number_of_message = len(sqsReceiveResponse.get('Messages', []))
+            if number_of_message==0:
+                break
+```
+
+읽어들인 메시지는 SQS(invokation)으로 push하고 SQS(event)의 메시지는 삭제합니다.
+
+```python
+for message in sqsReceiveResponse.get("Messages", []):
+    message_body = message["Body"]
+    receiptHandle = message['ReceiptHandle']
+
+    jsonbody = json.loads(message_body)
+    try:
+        sqs_client.send_message(
+        QueueUrl = invocationSqsUrl,
+        MessageAttributes = {},
+        MessageDeduplicationId = jsonbody['event_id'],
+        MessageGroupId = "invokation",
+        MessageBody = message_body
+    )
+    except Exception as e:
+        print('Fail to push the queue message: ', e)
+
+    try:
+        sqs_client.delete_message(
+            QueueUrl = eventSqsUrl,
+            ReceiptHandle = receiptHandle
+        )
+        except Exception as e:
+            print('Fail to delete the queue message: ', e)
+```
+
 
 ## 인프라 설치
 
