@@ -102,6 +102,24 @@ export class CdkLoadManagerStack extends cdk.Stack {
     });
     lambdaS3event.addEventSource(s3PutEventSource);        
 
+    // Lambda - Events
+    const lambdaJSSchedular = new lambda.Function(this, "LambdaForSchedular", {
+      description: 'scheduling events',
+      runtime: lambda.Runtime.NODEJS_14_X, 
+      code: lambda.Code.fromAsset("repositories/lambda-for-event"), 
+      handler: "index.handler", 
+      timeout: cdk.Duration.seconds(30),
+      environment: {
+        eventSqsUrl: queueS3event.queueUrl,
+        invokationSqsUrl: queueInvokation.queueUrl,
+        capacity: '100' // the capable capacity per operation by the scheduler 
+      }
+    }); 
+    // grant permissions
+    // s3Bucket.grantRead(lambdaS3Trigger);
+    queueS3event.grantConsumeMessages(lambdaJSSchedular)
+    queueInvokation.grantSendMessages(lambdaJSSchedular);
+
     // Lambda for schedular
     const lambdaSchedular = new lambda.Function(this, `lambda-schedular-${projectName}`, {
       description: 'lambda for schedular',
