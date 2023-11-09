@@ -2,7 +2,7 @@
 
 여기서는 S3를 통해 들어오는 다수의 트래픽을 분산하기 위한 간단한 Load Manager를 구현하고자 합니다. 이때의 전체적인 Architecture는 아래와 같습니다. EventBridge는 Load 분산을 위하여 일정시간 간격으로 Lambda(schedular)를 호출합니다. Lambda(schedular)는 SQS(event)에서 Step Functions이 한번에 처리할 있는 만큼의 Event를 가져와서, SQS(invokation)에 전달합니다. SQS(invokation)로 들어온 Event은 순차적으로 Lambda(invoke)/Step Functions에 전달됩니다.
 
-<img width="800" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/d2f1c58e-9abf-443d-a82b-56d3e27ace1f">
+<img width="800" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/7a1bdc86-0ede-416f-a198-40d396e3036d">
 
 각 단계별로 아래와 같이 동작합니다.
 
