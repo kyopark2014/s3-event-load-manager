@@ -66,6 +66,9 @@ try:
     )
 ```
 
+### Event Schedular
+
+[Lambda (schedular)](./lambda-schedular/lambda_function.py) 는 EventBrdige의 Trigger를 받아서, SQS(S3-event)로 부터 N개의 처리 가능한 수량의 메시지를 읽어서, SQS(Invocation)에 전달합니다.
 
 ## 인프라 설치
 
