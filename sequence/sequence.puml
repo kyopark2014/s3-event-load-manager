@@ -1,0 +1,60 @@
+@startuml Sequence Diagram - Sprites
+
+!define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/master/dist
+!includeurl AWSPuml/AWSCommon.puml
+!includeurl AWSPuml/Compute/all.puml
+!includeurl AWSPuml/Mobile/APIGateway.puml
+!includeurl AWSPuml/General/InternetGateway.puml
+!includeurl AWSPuml/Database/Database.puml
+!includeurl AWSPuml/Database/DynamoDB.puml
+!includeurl AWSPuml/Database/ElastiCache.puml
+!includeurl AWSPuml/Storage/SimpleStorageServiceS3.puml
+!includeurl AWSPuml/NetworkingAndContentDelivery/CloudFront.puml
+!includeurl AWSPuml/ApplicationIntegration/SNS.puml
+!includeurl AWSPuml/MachineLearning/Rekognition.puml
+!includeurl AWSPuml/MachineLearning/Polly.puml
+!includeurl AWSPuml/ApplicationIntegration/SQS.puml
+!includeurl AWSPuml/MachineLearning/SageMaker.puml
+!includeurl AWSPuml/MachineLearning/Kendra.puml
+!includeurl AWSPuml/ApplicationIntegration/EventBridge.puml
+'!includeurl AWSPuml/Containers/ElasticKubernetesService.puml
+
+'Comment out to use default PlantUML sequence formatting
+skinparam participant {
+    BackgroundColor AWS_BG_COLOR
+    BorderColor AWS_BORDER_COLOR
+}
+'Hide the bottom boxes
+hide footbox
+
+participant "<color:#blue><$ElasticKubernetesService></color>\nEKS" as eks
+participant "<color:#green><$SimpleStorageServiceS3></color>\nAmazon S3" as s3
+participant "<color:#D86613><$Lambda></color>\nAmazon Lambda\n(S3-event)" as lambda_s3
+participant "<color:#blue><$DynamoDB></color>\nDynamoDB" as dynamodb
+participant "<color:#red><$EventBridge></color>\nAmazon EventBrdige" as event_bridge
+participant "<color:#D86613><$Lambda></color>\nAmazon Lambda\n(schedular)" as lambda_schedular
+participant "<color:#red><$SQS></color>\nAmazon SQS" as sqs
+participant "<color:#D86613><$Lambda></color>\nAmazon Lambda\n(invoke)" as lambda_invoke
+participant "<color:#red><$StepFunctions></color>\nAWS StepFunctions" as step_function
+
+eks -> s3 : Push Objejcts
+
+
+s3 -> lambda_s3 : Put Event
+
+lambda_s3 -> dynamodb : event info
+
+event_bridge -> lambda_schedular:  trigger periodically
+
+
+lambda_schedular -> dynamodb ++: load events
+
+dynamodb -> lambda_schedular --
+
+lambda_schedular -> sqs: push events
+
+sqs -> lambda_invoke: events
+
+lambda_invoke -> step_function: invoke operation
+
+@enduml
