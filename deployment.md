@@ -7,7 +7,7 @@
 
 1) [Cloud9 Console](https://ap-northeast-2.console.aws.amazon.com/cloud9control/home?region=ap-northeast-2#/create)에 접속하여 [Create environment]-[Name]에서 “load manager”으로 이름을 입력하고, EC2 instance는 “m5.large”를 선택합니다. 나머지는 기본값을 유지하고, 하단으로 스크롤하여 [Create]를 선택합니다.
 
-<img width="817" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/a4d5f7dd-0384-4cc0-9f73-fd9aa220f4e6">
+![noname](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/7641206c-5e6f-4a23-ac6c-1eb9e6218a67)
 
 
 2) [Environment](https://ap-northeast-2.console.aws.amazon.com/cloud9control/home?region=ap-northeast-2#/)에서 “chatbot”를 [Open]한 후에 아래와 같이 터미널을 실행합니다.
