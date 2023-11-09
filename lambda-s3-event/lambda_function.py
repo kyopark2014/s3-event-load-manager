@@ -5,7 +5,8 @@ import datetime
 import uuid
 import traceback
 
-tableName = os.environ.get('tableName')
+sqs_client = boto3.client('sqs')
+sqsUrl = os.environ.get('queueS3event')
 
 def lambda_handler(event, context):
     print(event)
@@ -31,23 +32,25 @@ def lambda_handler(event, context):
             'key': {'S':key}
         }) 
         
-        item = {
+        body = {
             'event_id': {'S':eventId},
             'event_timestamp': {'S':timestamp},
-            'event_end': {'S':'NA'},
-            'event_status': {'S':'created'},  
             'event_body': {'S':body}     
         }
         
-        client = boto3.client('dynamodb')
+        # push to SQS
         try:
-            resp = client.put_item(TableName=tableName, Item=item)
-        except Exception as ex:
-            err_msg = traceback.format_exc()
-            print('err_msg: ', err_msg)
-            raise Exception ("Not able to write into dynamodb")        
-        print('resp, ', resp)
+            sqs_client.send_message(
+                QueueUrl=sqsUrl, 
+                MessageAttributes={},
+                MessageDeduplicationId=eventId,
+                MessageGroupId="putEvent",
+                MessageBody=json.dumps(body)
+            )
 
+        except Exception as e:        
+            print('Fail to delete the queue message: ', e)
+        
         s3eventInfo.append({
             'bucketName': bucketName,
             'key': key
@@ -56,4 +59,4 @@ def lambda_handler(event, context):
     return {
         'statusCode': 200,
         'result': json.dumps(s3eventInfo),
-    }        
+    }

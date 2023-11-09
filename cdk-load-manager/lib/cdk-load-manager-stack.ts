@@ -43,17 +43,33 @@ export class CdkLoadManagerStack extends cdk.Stack {
 
     // SQS for S3 event
     const queueS3event = new sqs.Queue(this, 'queueS3event', {
-      visibilityTimeout: cdk.Duration.seconds(310),
-      queueName: "queue-s3-putitem.fifo",
+      visibilityTimeout: cdk.Duration.seconds(30),
+      queueName: "queue-s3-putEvent.fifo",
       fifo: true,
       contentBasedDeduplication: false,
       deliveryDelay: cdk.Duration.millis(0),
       retentionPeriod: cdk.Duration.days(2),
     });
     if (debug) {
-      new cdk.CfnOutput(this, 'sqsS3PutItemUrl', {
+      new cdk.CfnOutput(this, 'sqsS3PutEventUrl', {
         value: queueS3event.queueUrl,
-        description: 'The url of the S3 putItem Queue',
+        description: 'The url of the S3 putEvent Queue',
+      });
+    }
+
+    // SQS for Invokation 
+    const queueInvokation = new sqs.Queue(this, 'queueInvocation', {
+      visibilityTimeout: cdk.Duration.seconds(30),
+      queueName: "queue-Invocation.fifo",
+      fifo: true,
+      contentBasedDeduplication: false,
+      deliveryDelay: cdk.Duration.millis(0),
+      retentionPeriod: cdk.Duration.days(2),
+    });
+    if (debug) {
+      new cdk.CfnOutput(this, 'sqsInvoationUrl', {
+        value: queueInvokation.queueUrl,
+        description: 'The url of the S3 Invoation Queue',
       });
     }
 
@@ -67,6 +83,7 @@ export class CdkLoadManagerStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(120),
       logRetention: logs.RetentionDays.ONE_DAY,
       environment: {
+        queueS3event: queueS3event.queueUrl
       }
     });
     s3Bucket.grantReadWrite(lambdaS3event); // permission for s3
@@ -92,10 +109,12 @@ export class CdkLoadManagerStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(120),
       logRetention: logs.RetentionDays.ONE_DAY,
       environment: {
-        sqsUrl: queueS3event.queueUrl
+        eventSqsUrl: queueS3event.queueUrl,
+        invokationSqsUrl: queueInvokation.queueUrl
       }
     });
-    queueS3event.grantSendMessages(lambdaSchedular); // permision for SQS putItem
+    queueS3event.grantSendMessages(lambdaSchedular); // permision for SQS putEvent
+    queueInvokation.grantSendMessages(lambdaSchedular); // permision for SQS Invokation
 
     // cron job - EventBridge
     const rule = new events.Rule(this, `EventBridge-${projectName}`, {
@@ -114,7 +133,7 @@ export class CdkLoadManagerStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(120),
       logRetention: logs.RetentionDays.ONE_DAY,
       environment: {
-        sqsUrl: queueS3event.queueUrl
+        invokationSqsUrl: queueInvokation.queueUrl
       }
     });
     // grant permissions
