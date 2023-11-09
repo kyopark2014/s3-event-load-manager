@@ -172,9 +172,8 @@ Output의 copyCommend를 활용하여 Cloud9의 터미널에서 data 폴더에 �
 이후 CloudWatch에서 메시지가 순차적으로 처리되고 있는지 확인할 수 있습니다. 또한, SQS의 Monitoring에서 아래와 같이 인입된 메시지와 Lambda(invoke)로 전달된 메시지의 숫자를 확인할 수 있습니다.
 
 SQS(event)에 아래와 같이 13:14분에 115개의 메시지가 수신되었습니다. 
-ㄴ
-![image](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/cac72a09-95ff-499e-b60d-1fa307d2b13b)
+
 
 SQS(invokation)에서 Lambda(invoke)로 전달된 메시지는 아래와 같이 3번에 나누어서 전달되었습니다.
 
-![image](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/fbaa52ed-ee15-4675-b379-d7ffaca274a9)
+![image](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/350bd3ff-a893-496b-bd86-6897a46c1b60)
