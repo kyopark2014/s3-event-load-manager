@@ -74,13 +74,17 @@ try:
 
 [deployment.md](./deployment.md)에 인프라를 설치하고 필요한 셈플 파일을 다운로드 합니다.
 
+설치가 다 완료가 되면 아래와 같이 파일 복사 명령어를 확인할 수 있습니다.
+
+<img width="1058" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/856b8d4c-e394-4b27-a709-e31592e6c87a">
+
+
 ## 실행 방법
 
 Cloud9의 터미널에서 아래 명령어를 이용하여 S3의 data 폴더에 다량의 parquet 파일을 전송합니다.
 
 ```text
-cd ~/data
-aws s3 cp . s3://storage-reading-parquet/data/ --recursive
+aws s3 cp ~/environment/data/ s3://storage-for-s3-event-manager/data/ --recursive
 ```
 
 이후 CloudWatch에서 메시지가 순차적으로 처리되고 있는지 확인합니다.
