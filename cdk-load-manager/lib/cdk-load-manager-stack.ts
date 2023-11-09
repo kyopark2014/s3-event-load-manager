@@ -133,7 +133,7 @@ export class CdkLoadManagerStack extends cdk.Stack {
         invokationSqsUrl: queueInvokation.queueUrl
       }
     });
-    queueS3event.grantSendMessages(lambdaSchedular); // permision for SQS putEvent
+    queueS3event.grantConsumeMessages(lambdaSchedular); // permision for SQS putEvent
     queueInvokation.grantSendMessages(lambdaSchedular); // permision for SQS Invokation
 
     // cron job - EventBridge
