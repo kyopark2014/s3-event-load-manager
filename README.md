@@ -86,7 +86,7 @@ EventBridge가 처리할 수 있는 job의 갯수를 capacity라고 정의하였
 
 ```python
 while True:
-    if cnt > capacity:
+    if cnt >= capacity:
         break
 
     try:               
