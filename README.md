@@ -10,10 +10,10 @@
 2) S3에 object가 인입될때 발생하는 put evnet를 Lambda(S3-event)가 받아서, S3 Object에 대한 bucket, key에 대한 정보를 수집합니다.
 3) Lambda(S3-event)는 object에 대한 정보를 SQS(event)에 push 합니다.
 4) 정기적으로 EventBridge가 Lambda(schedular)를 Trigger합니다.
-5) Lambda(Schedular)는 SQS(event)에서 N개의 메시지를 읽어오고, 읽어온 메시지는 삭제합니다. 여기서 N은 StepFunctions가 처리하는 그룹 작업(job)의 숫자입니다.
-6) Lambda(Schedular)는 SQS(invocation)에 N개의 메시지를 push 합니다.
+5) Lambda(schedular)는 SQS(event)에서 N개의 메시지를 읽어오고, 읽어온 메시지는 삭제합니다. 여기서 N은 StepFunctions가 처리하는 그룹 작업(job)의 숫자입니다.
+6) Lambda(schedular)는 SQS(invocation)에 N개의 메시지를 push 합니다.
 7) SQS(invocation)가 Lambda(invoke)를 trigger합니다.
-8) Lambda(Inovoke)는 Step Functions을 실행해야 Job을 수행합니다.
+8) Lambda(inovoke)는 Step Functions을 실행해야 Job을 수행합니다.
    
 <img width="800" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/9dd23b6a-7c92-4302-86c2-fd99fdf90067">
 
