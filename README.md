@@ -76,3 +76,11 @@ try:
 
 ## 실행 방법
 
+Cloud9의 터미널에서 아래 명령어를 이용하여 S3의 data 폴더에 다량의 parquet 파일을 전송합니다.
+
+```text
+cd ~/data
+aws s3 cp . s3://storage-reading-parquet/data/ --recursive
+```
+
+이후 CloudWatch에서 메시지가 순차적으로 처리되고 있는지 확인합니다.
