@@ -27,7 +27,44 @@ Load Manager를 사용하지 않은 일반적은 경우의 트래픽 처리는 �
 
 [Lambda (S3-event)](./lambda-s3-event/lambda_function.py) 는 S3에 Object가 생성될때 발생하는 S3 put Evnet를 받아서 SQS(S3-event)에 저장합니다. 
 
+아래와 같이 [Lambda (S3-event)](./lambda-s3-event/lambda_function.py) 로 들어온 event에서 object의 bucket 이름과 key를 추출합니다.
 
+```python
+for record in event['Records']:
+  print("record: ", record)
+
+  s3 = record['s3']
+  bucketName = s3['bucket']['name']
+  key = s3['object']['key']
+```
+
+아래에서는 편의상 event ID로 uuid를 사용하고, timestamp를 지정하였습니다. 각 event의 body에는 object에 정보인 bucket과 key를 입력하고 SQS(S3-event)를 메시지로 넣습니다.
+
+```python
+eventId = str(uuid.uuid1())
+
+d = datetime.datetime.now()
+timestamp = str(d)
+body = json.dumps({
+    'bucket_name': bucketName,
+    'key': key
+}) 
+
+s3EventInfo = {
+    'event_id': eventId,
+    'event_timestamp': timestamp,
+    'event_body': body
+}
+        
+try:
+    sqs_client.send_message(
+        QueueUrl = sqsUrl,
+        MessageAttributes = {},
+        MessageDeduplicationId = eventId,
+        MessageGroupId = "putEvent",
+        MessageBody = json.dumps(s3EventInfo)
+    )
+```
 
 
 ## 인프라 설치
