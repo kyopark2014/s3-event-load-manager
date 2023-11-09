@@ -152,7 +152,9 @@ def lambda_handler(event, context):
             print('Fail to delete the queue message: ', e)
 ```
 
-## 인프라 설치
+## 직접 실습해 보기
+
+### 인프라 설치
 
 [deployment.md](./deployment.md)에 인프라를 설치하고 필요한 셈플 파일을 다운로드 합니다.
 
@@ -161,7 +163,7 @@ def lambda_handler(event, context):
 <img width="1058" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/856b8d4c-e394-4b27-a709-e31592e6c87a">
 
 
-## 실행 방법
+### 실행 방법
 
 Cloud9의 터미널에서 아래 명령어를 이용하여 S3의 data 폴더에 다량의 parquet 파일을 전송합니다.
 
@@ -169,8 +171,8 @@ Cloud9의 터미널에서 아래 명령어를 이용하여 S3의 data 폴더에 
 aws s3 cp ~/environment/data/ s3://storage-for-s3-event-manager/data/ --recursive
 ```
 
-이후 CloudWatch에서 메시지가 순차적으로 처리되고 있는지 확인합니다.
-
+### 실행 결과
+이후 CloudWatch에서 메시지가 순차적으로 처리되고 있는지 확인할 수 있습니다. 또한, SQS의 Monitoring에서 아래와 같이 인입된 메시지와 Lambda(invoke)로 전달된 메시지의 숫자를 확인할 수 있습니다.
 
 SQS(event)에 아래와 같이 13:14분에 115개의 메시지가 수신되었습니다. 
 ㄴ
