@@ -9,7 +9,7 @@ sqs_client = boto3.client('sqs')
 sqsUrl = os.environ.get('queueS3event')
 
 def lambda_handler(event, context):
-    print(event)
+    # print(event)
 
     s3eventInfo = []
     for record in event['Records']:
@@ -43,8 +43,7 @@ def lambda_handler(event, context):
             sqs_client.send_message(
                 QueueUrl=sqsUrl, 
                 MessageAttributes={},
-                MessageDeduplicationId=eventId,
-                MessageGroupId="putEvent",
+                DelaySeconds=0,
                 MessageBody=json.dumps(s3EventInfo)
             )
 

@@ -135,11 +135,11 @@ export class CdkLoadManagerStack extends cdk.Stack {
     queueInvokation.grantSendMessages(lambdaSchedular); // permision for Invokation SQS 
 
     // cron job - EventBridge
-    const rule = new events.Rule(this, `EventBridge-${projectName}`, {
+    /*const rule = new events.Rule(this, `EventBridge-${projectName}`, {
       description: "rule-of-event-bridge",
       schedule: events.Schedule.expression('rate(1 minute)'),
     }); 
-    rule.addTarget(new targets.LambdaFunction(lambdaSchedular)); 
+    rule.addTarget(new targets.LambdaFunction(lambdaSchedular)); */
 
     // Lambda - Invoke
     const lambdaInvoke = new lambda.Function(this, `lambda-invoke-for-${projectName}`, {
