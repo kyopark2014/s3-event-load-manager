@@ -84,7 +84,7 @@ export class CdkLoadManagerStack extends cdk.Stack {
         queueS3event: queueS3event.queueUrl
       }
     });
-    s3Bucket.grantReadWrite(lambdaS3event); // permission for s3
+    // s3Bucket.grantReadWrite(lambdaS3event); // permission for s3
     queueS3event.grantSendMessages(lambdaS3event); // permision for SQS putEvent
     
     // s3 put event source
@@ -112,8 +112,6 @@ export class CdkLoadManagerStack extends cdk.Stack {
         capacity: '100' // the capable capacity per operation by the scheduler 
       }
     }); 
-    // grant permissions
-    // s3Bucket.grantRead(lambdaS3Trigger);
     queueS3event.grantConsumeMessages(lambdaJSSchedular)
     queueInvokation.grantSendMessages(lambdaJSSchedular);
 
@@ -156,7 +154,7 @@ export class CdkLoadManagerStack extends cdk.Stack {
     });
     // grant permissions
     s3Bucket.grantRead(lambdaInvoke);  // read permission for S3
-    lambdaInvoke.addEventSource(new SqsEventSource(queueS3event)); // permission for SQS
+    lambdaInvoke.addEventSource(new SqsEventSource(queueInvokation)); // permission for SQS
 
     // copy commend
     new cdk.CfnOutput(this, 'copyCommend', {
