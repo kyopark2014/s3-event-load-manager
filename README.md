@@ -1,4 +1,4 @@
-# S3를 통해 들어오는 트래픽을 제어하는 Simple Load Manager
+# S3의 Object 부하를 제어하는 Simple Load Manager
 
 여기서는 S3를 통해 들어오는 다수의 트래픽의 로드를 분산하기 위한 간단한 Load Manager를 보여주고자 합니다. 이때의 전체적인 Architecture는 아래와 같습니다. 여기서 
 
