@@ -187,5 +187,6 @@ CloudWatch에서 메시지가 순차적으로 처리되고 있는지 확인할 �
 ![image](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/2a772643-1142-4c84-bbce-a89e7d53c5ec)
 
 1분 간격으로 50개씩 로드(job)이 분배되었음을 확인할 수 있습니다.
+
 ![image](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/b6eed0ed-6a70-453a-977e-82e6bfe21fe6)
 
