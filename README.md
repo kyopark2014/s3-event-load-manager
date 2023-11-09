@@ -86,6 +86,7 @@ try:
 EventBridge가 처리할 수 있는 job의 갯수(N)를 capacity라고 정의하였습니다. 아래와 같이 [receive_message()](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/sqs/client/receive_message.html)를 이용하여 SQS(invoke)에서 메시지를 읽어오는데, 읽어온 메시지의 전체 숫자가 capacity보다 크다면 읽어오는 동작을 멈춥니다. 만약 읽어온 메시지의 숫자가 capacity보다 작다면, SQS(event)에서 10개씩 메시지를 읽어서 SQS(invokation)에 push합니다. 
 
 ```python
+cnt = 9
 while True:
     if cnt >= capacity:
         break
