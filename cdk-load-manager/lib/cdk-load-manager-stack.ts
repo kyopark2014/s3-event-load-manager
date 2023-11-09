@@ -13,6 +13,8 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 
 const debug = false;
 const projectName = "s3-event-manager"
+const region = process.env.CDK_DEFAULT_REGION;   
+
 export class CdkLoadManagerStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
