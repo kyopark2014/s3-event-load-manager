@@ -14,7 +14,7 @@ def lambda_handler(event, context):
     # get message from SQS(S3-event)
     cnt = 0
     while True:
-        if cnt > capacity:
+        if cnt >= capacity:
             break
 
         try:               
@@ -41,18 +41,9 @@ def lambda_handler(event, context):
 
                 jsonbody = json.loads(message_body)
                 print("event_id: ", jsonbody['event_id'])
-
-                # delete queue
-                try:
-                    sqs_client.delete_message(
-                        QueueUrl=eventSqsUrl, 
-                        ReceiptHandle=receiptHandle
-                    )
-                except Exception as e:        
-                    print('Fail to delete the queue message: ', e)
-                print('deleted message: ', jsonbody['event_id'])
-
-                if cnt < capacity:     # push to SQS (invokation)                                   
+                
+                print("cnt: "+str(cnt)+", capacity: "+str(capacity))
+                if cnt < capacity:                    
                     try:
                         sqs_client.send_message(
                             QueueUrl=invocationSqsUrl, 
@@ -62,31 +53,30 @@ def lambda_handler(event, context):
                             MessageBody=message_body
                         )
                         cnt = cnt+1
+                        print(f"sum of pushed messages: {cnt}")
                     except Exception as e:        
                         print('Fail to push the queue message: ', e)
                     print('pushed message: ', jsonbody['event_id'])
-                    
-                else: # push to SQS(event) again                    
+
+                    # delete queue
                     try:
-                        sqs_client.send_message(
+                        sqs_client.delete_message(
                             QueueUrl=eventSqsUrl, 
-                            MessageAttributes={},
-                            MessageDeduplicationId=jsonbody['event_id'],
-                            MessageGroupId="putEvent",
-                            MessageBody=message_body
+                            ReceiptHandle=receiptHandle
                         )
-                        print('The message push back to the original queue, SQS(event): ', jsonbody['event_id'])
-
                     except Exception as e:        
-                        print('Fail to push the queue message: ', e)
-
+                        print('Fail to delete the queue message: ', e)
+                    print('deleted message: ', jsonbody['event_id'])     
+                else: 
+                    break                    
+                    
         except Exception as e:        
             print('Fail to read the queue message: ', e)
     
     if cnt == 0:
         print('No messages')
     else:
-        print('used messages: ', cnt+1)
+        print('used messages: ', cnt)
 
     return {
         'statusCode': 200,
