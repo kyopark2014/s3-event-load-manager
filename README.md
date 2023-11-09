@@ -20,6 +20,8 @@ Load Manager를 사용하지 않은 일반적은 경우의 트래픽 처리는 �
 
 기본적인 Call Flow는 아래와 같습니다.
 
+![image](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/1ad4ad93-72b2-4928-a38c-be78426023a7)
+
 
 ## Load Manager를 사용하는 경우
 
