@@ -4,7 +4,7 @@
 
 <img width="800" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/d2f1c58e-9abf-443d-a82b-56d3e27ace1f">
 
-이때의 Call Flow는 아래와 같습니다.
+각 단계별로 아래와 같이 동작합니다.
 
 1) EKS에서 다수의 데이터를 S3에 object로 저장합니다. 
 2) S3에 object가 인입될때 발생하는 put evnet를 Lambda(S3-event)가 받아서, S3 Object에 대한 bucket, key에 대한 정보를 수집합니다.
@@ -14,7 +14,8 @@
 6) Lambda(schedular)는 SQS(invocation)에 N개의 메시지를 push 합니다.
 7) SQS(invocation)가 Lambda(invoke)를 trigger합니다.
 8) Lambda(inovoke)는 Step Functions을 실행하여 Job을 수행합니다.
-   
+
+이때의 Call Flow는 아래와 같습니다.   
 <img width="800" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/9dd23b6a-7c92-4302-86c2-fd99fdf90067">
 
 
