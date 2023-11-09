@@ -10,37 +10,23 @@
 ![noname](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/7641206c-5e6f-4a23-ac6c-1eb9e6218a67)
 
 
-2) [Environment](https://ap-northeast-2.console.aws.amazon.com/cloud9control/home?region=ap-northeast-2#/)에서 “chatbot”를 [Open]한 후에 아래와 같이 터미널을 실행합니다.
+2) [Environment](https://ap-northeast-2.console.aws.amazon.com/cloud9control/home?region=ap-northeast-2#/)에서 “load manager”를 [Open]한 후에 아래와 같이 터미널을 실행합니다.
 
 ![noname](https://github.com/kyopark2014/chatbot-based-on-Falcon-FM/assets/52392004/b7d0c3c0-3e94-4126-b28d-d269d2635239)
 
-3) EBS 크기 변경
-
-아래와 같이 스크립트를 다운로드 합니다. 
-
-```text
-curl https://raw.githubusercontent.com/kyopark2014/technical-summary/main/resize.sh -o resize.sh
-```
-
-이후 아래 명령어로 용량을 80G로 변경합니다.
-```text
-chmod a+rx resize.sh && ./resize.sh 80
-```
-
-
-4) 소스를 다운로드합니다.
+3) 소스를 다운로드합니다.
 
 ```java
-git clone https://github.com/kyopark2014/s3-put-event-manager
+git clone https://github.com/kyopark2014/s3-event-load-manager
 ```
 
-5) cdk 폴더로 이동하여 필요한 라이브러리를 설치합니다.
+4) cdk 폴더로 이동하여 필요한 라이브러리를 설치합니다.
 
 ```java
-cd s3-put-event-manager/cdk-s3-event-manager/ && npm install
+cd s3-event-load-manager/cdk-load-manager/ && npm install
 ```
 
-6) CDK 사용을 위해 Boostraping을 수행합니다.
+5) CDK 사용을 위해 Boostraping을 수행합니다.
 
 아래 명령어로 Account ID를 확인합니다.
 
@@ -66,6 +52,6 @@ Cloud9에서 다른 터미널로 이동하여 아래의 명령어로 압축을 �
 
 ```java
 cd ~/environment/
-unzip s3-put-event-manager/data.zip 
+unzip s3-event-load-manager/data.zip 
 
 ```
