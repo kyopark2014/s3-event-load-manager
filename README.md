@@ -6,7 +6,7 @@
 
 기본적인 Call Flow는 아래와 같습니다.
 
-![image](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/1ad4ad93-72b2-4928-a38c-be78426023a7)
+<img width="806" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/9dd23b6a-7c92-4302-86c2-fd99fdf90067">
 
 
 ## Load Manager가 필요한 이유
@@ -20,7 +20,7 @@ Load Manager를 사용하지 않은 일반적은 경우의 트래픽 처리는 �
 
 이러한 event driven architecture는 유연한 시스템을 구성하는데 많은 도움을 주지만, 실제 프로세싱을 하는 Step Function으로 인입되는 트래픽을 정밀하게 제어하기 어렵습니다. 예를 들면, S3로 인입되는 다수의 Data 처리를 한꺼번에 Step Function에서 처리할 수 없는 경우에 50개 또는 100개 단위로 5분간격으로 처리하고자 한다면, 스케줄러를 이용하여야 합니다.
 
-![image](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/47f9174e-e7a7-4a59-90f2-1d58ee322fa8)
+<img width="806" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/47f9174e-e7a7-4a59-90f2-1d58ee322fa8">
 
 
 
