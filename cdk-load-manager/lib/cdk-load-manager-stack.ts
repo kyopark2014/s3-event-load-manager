@@ -98,8 +98,7 @@ export class CdkLoadManagerStack extends cdk.Stack {
       handler: 'lambda_function.lambda_handler',
       runtime: lambda.Runtime.PYTHON_3_11,
       code: lambda.Code.fromAsset(path.join(__dirname, '../../lambda-s3-event')),
-      timeout: cdk.Duration.seconds(120),
-      role: roleLambda,
+      timeout: cdk.Duration.seconds(120),      
       logRetention: logs.RetentionDays.ONE_DAY,
       environment: {
         queueS3event: queueS3event.queueUrl
@@ -125,6 +124,7 @@ export class CdkLoadManagerStack extends cdk.Stack {
       functionName: `lambda-schedular-for-${projectName}`,
       handler: 'lambda_function.lambda_handler',
       runtime: lambda.Runtime.PYTHON_3_11,
+      role: roleLambda,
       code: lambda.Code.fromAsset(path.join(__dirname, '../../lambda-schedular')),
       timeout: cdk.Duration.seconds(120),
       logRetention: logs.RetentionDays.ONE_DAY,
@@ -133,8 +133,8 @@ export class CdkLoadManagerStack extends cdk.Stack {
         invokationSqsUrl: queueInvokation.queueUrl
       }
     });
-    queueS3event.grantConsumeMessages(lambdaSchedular); // permision for SQS putEvent
-    queueInvokation.grantSendMessages(lambdaSchedular); // permision for SQS Invokation
+    queueS3event.grantConsumeMessages(lambdaSchedular); // permision for putEvent SQS 
+    queueInvokation.grantSendMessages(lambdaSchedular); // permision for Invokation SQS 
 
     // cron job - EventBridge
     const rule = new events.Rule(this, `EventBridge-${projectName}`, {
