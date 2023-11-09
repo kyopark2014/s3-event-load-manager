@@ -133,7 +133,7 @@ for message in sqsReceiveResponse.get("Messages", []):
 
 ### Lambda(invoke)에서 메시지 읽어오기
 
-Lambda(invoke)는 SQS(invokation)이 전달해온 event에서 bucket의 이름과 key를 추출하여 이용합니다.
+Lambda(invoke)는 SQS(invokation)이 전달해온 event에서 bucket의 이름과 key를 추출하여 이용하고, SQS(inokation)의 메시지를 삭제합니다.
 
 ```python
 def lambda_handler(event, context):
