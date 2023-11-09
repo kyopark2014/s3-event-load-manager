@@ -28,14 +28,14 @@ def lambda_handler(event, context):
         # timestamp = str(d)[0:19]  # min
         timestamp = str(d)
         body = json.dumps({
-            'bucket_name': {'S':bucketName},
-            'key': {'S':key}
+            'bucket_name': bucketName,
+            'key': key
         }) 
         
-        body = {
-            'event_id': {'S':eventId},
-            'event_timestamp': {'S':timestamp},
-            'event_body': {'S':body}     
+        s3EventInfo = {
+            'event_id': eventId,
+            'event_timestamp': timestamp,
+            'event_body': body
         }
         
         # push to SQS
@@ -45,7 +45,7 @@ def lambda_handler(event, context):
                 MessageAttributes={},
                 MessageDeduplicationId=eventId,
                 MessageGroupId="putEvent",
-                MessageBody=json.dumps(body)
+                MessageBody=json.dumps(s3EventInfo)
             )
 
         except Exception as e:        

@@ -87,6 +87,7 @@ export class CdkLoadManagerStack extends cdk.Stack {
       }
     });
     s3Bucket.grantReadWrite(lambdaS3event); // permission for s3
+    queueS3event.grantSendMessages(lambdaS3event); // permision for SQS putEvent
     
     // s3 put event source
     const s3PutEventSource = new lambdaEventSources.S3EventSource(s3Bucket, {
