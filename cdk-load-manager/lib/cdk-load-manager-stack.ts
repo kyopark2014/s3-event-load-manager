@@ -46,8 +46,8 @@ export class CdkLoadManagerStack extends cdk.Stack {
     // SQS for S3 event
     const queueS3event = new sqs.Queue(this, 'queueS3event', {
       visibilityTimeout: cdk.Duration.seconds(120),
-      queueName: "queue-s3-putEvent.fifo",
-      fifo: true,
+      queueName: "queue-s3-putEvent",
+      // fifo: true,
       contentBasedDeduplication: false,
       deliveryDelay: cdk.Duration.millis(0),
       retentionPeriod: cdk.Duration.days(2),
@@ -106,6 +106,7 @@ export class CdkLoadManagerStack extends cdk.Stack {
     const lambdaJSSchedular = new lambda.Function(this, "LambdaForSchedular", {
       description: 'scheduling events',
       runtime: lambda.Runtime.NODEJS_14_X, 
+      functionName: `lambda-JS-schedular-for-${projectName}`,
       code: lambda.Code.fromAsset("../lambda-for-event"), 
       handler: "index.handler", 
       timeout: cdk.Duration.seconds(30),
