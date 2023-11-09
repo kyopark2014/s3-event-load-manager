@@ -16,54 +16,47 @@ def lambda_handler(event, context):
     try:       
         sqsReceiveResponse = sqs_client.receive_message(
             QueueUrl=eventSqsUrl,
-            message_attribute_names="All", # Receive all custom attributes.
-            #MessageAttributeNames=['All'],
-            wait_time_seconds=0, # Do not wait to check for the message.
-            #VisibilityTimeout=0,
-            #message_attribute_names = ["MessageAttributeName"],
-            #MaxNumberOfMessages=10,
-            #WaitTimeSeconds=3,
-            #AttributeNames = ['All'],
             MaxNumberOfMessages=1,
-            #VisibilityTimeout=120,
-            #receive_request_attempt_id="event",
         )
         print('sqsReceiveResponse: ', sqsReceiveResponse)        
         print(f"Number of messages received: {len(sqsReceiveResponse.get('Messages', []))}")
         
         for message in sqsReceiveResponse.get("Messages", []):
             message_body = message["Body"]
-            print(f"Message body: {json.loads(message_body)}")
-            print(f"Receipt Handle: {message['ReceiptHandle']}")                
+            receiptHandle = message['ReceiptHandle']
+            print(f"Message body: ", json.loads(message_body))
+            print(f"Receipt Handle: ", receiptHandle)
+
+            jsonbody = json.loads(message_body)
+            print("event_id: ", jsonbody['event_id'])
+            # push to SQS
+            try:
+                sqs_client.send_message(
+                    QueueUrl=invocationSqsUrl, 
+                    MessageAttributes={},
+                    MessageDeduplicationId=jsonbody['event_id'],
+                    MessageGroupId="putEvent",
+                    MessageBody=message_body
+                )
+            except Exception as e:        
+                print('Fail to push the queue message: ', e)
+
+            print('pushed message: ', jsonbody['event_id'])
+
+            # delete queue
+            try:
+                sqs_client.delete_message(
+                    QueueUrl=eventSqsUrl, 
+                    ReceiptHandle=receiptHandle
+                )
+            except Exception as e:        
+                print('Fail to delete the queue message: ', e)
+
+            print('deleted message: ', jsonbody['event_id'])
 
     except Exception as e:        
-        print('Fail to delete the queue message: ', e)
-        
-
-
-        
-    #    body = {
-    #        'eventId': eventId,
-    #        'eventTimestamp': eventTimestamp,
-    #        'bucketName': bucketName,
-    #        'key': key
-    #    }
-    #    print('body: ', body)
-
-        # push to SQS
-    #    try:
-    #        sqs_client.send_message(
-    #            QueueUrl=sqsUrl, 
-    #            MessageAttributes={},
-    #            MessageDeduplicationId=eventId,
-    #            MessageGroupId="putEvent",
-    #            MessageBody=json.dumps(body)
-    #        )
-
-    #   except Exception as e:        
-    #        print('Fail to delete the queue message: ', e)
-        
-    
+        print('Fail to read the queue message: ', e)
+            
     return {
         'statusCode': 200,
     }        

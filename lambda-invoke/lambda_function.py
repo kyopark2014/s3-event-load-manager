@@ -21,16 +21,16 @@ def lambda_handler(event, context):
 
         jsonbody = json.loads(body)
         
-        eventId = jsonbody['eventId']
+        eventId = jsonbody['event_id']
         print("eventId: ", eventId)
 
-        eventTimestamp = jsonbody['eventTimestamp']
+        eventTimestamp = jsonbody['event_timestamp']
         print("eventTimestamp: ", eventTimestamp)
 
-        bucketName = jsonbody['bucketName']
+        bucketName = jsonbody['event_body']['bucketName']
         print("bucketName: ", bucketName)
 
-        key = jsonbody['key']
+        key = jsonbody['event_body']['key']
         print("key: ", key)
 
         # delete queue
