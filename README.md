@@ -182,7 +182,7 @@ CloudWatch에서 메시지가 순차적으로 처리되고 있는지 확인할 �
 
 ![image](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/df6c2176-1f0c-400a-a4fa-2a0bcff46e70)
 
-아래는 920개의 파일을 S3에 업로드시의 결과 입니다.
+아래는 920개의 파일을 S3에 업로드하였을 때의 결과 입니다.
 
 ![image](https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/2a772643-1142-4c84-bbce-a89e7d53c5ec)
 
