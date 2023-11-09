@@ -43,7 +43,8 @@ def lambda_handler(event, context):
             sqs_client.send_message(
                 QueueUrl=sqsUrl, 
                 MessageAttributes={},
-                DelaySeconds=0,
+                MessageDeduplicationId=eventId,
+                MessageGroupId="putEvent",
                 MessageBody=json.dumps(s3EventInfo)
             )
 

@@ -37,7 +37,7 @@ def lambda_handler(event, context):
         sqsReceiveResponse = sqs_client.receive_message(
             QueueUrl=eventSqsUrl,
             #message_attribute_names="All", # Receive all custom attributes.
-            MessageAttributeNames=['All'],
+            #MessageAttributeNames=['All'],
             #wait_time_seconds=0, # Do not wait to check for the message.
             #VisibilityTimeout=0,
             #message_attribute_names = ["MessageAttributeName"],

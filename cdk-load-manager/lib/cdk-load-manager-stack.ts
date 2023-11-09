@@ -43,10 +43,14 @@ export class CdkLoadManagerStack extends cdk.Stack {
       });
     }
 
-    // SQS for S3 event - Standard
+    // SQS for S3 event
     const queueS3event = new sqs.Queue(this, 'queueS3event', {
-      queueName: "queue-s3-putEvent",
       visibilityTimeout: cdk.Duration.seconds(120),
+      queueName: "queue-s3-putEvent.fifo",
+      fifo: true,
+      contentBasedDeduplication: false,
+      deliveryDelay: cdk.Duration.millis(0),
+      retentionPeriod: cdk.Duration.days(2),
     });
     if (debug) {
       new cdk.CfnOutput(this, 'sqsS3PutEventUrl', {
@@ -55,7 +59,7 @@ export class CdkLoadManagerStack extends cdk.Stack {
       });
     }
 
-    // SQS for Invokation 
+    // SQS for Invokation
     const queueInvokation = new sqs.Queue(this, 'queueInvocation', {
       visibilityTimeout: cdk.Duration.seconds(120),
       queueName: "queue-Invocation.fifo",
@@ -84,7 +88,7 @@ export class CdkLoadManagerStack extends cdk.Stack {
         queueS3event: queueS3event.queueUrl
       }
     });
-    // s3Bucket.grantReadWrite(lambdaS3event); // permission for s3
+    s3Bucket.grantReadWrite(lambdaS3event); // permission for s3
     queueS3event.grantSendMessages(lambdaS3event); // permision for SQS putEvent
     
     // s3 put event source
@@ -97,23 +101,6 @@ export class CdkLoadManagerStack extends cdk.Stack {
       ]
     });
     lambdaS3event.addEventSource(s3PutEventSource);        
-
-    // Lambda - Events
-    const lambdaJSSchedular = new lambda.Function(this, "LambdaForSchedular", {
-      description: 'scheduling events',
-      runtime: lambda.Runtime.NODEJS_14_X, 
-      functionName: `lambda-JS-schedular-for-${projectName}`,
-      code: lambda.Code.fromAsset("../lambda-for-event"), 
-      handler: "index.handler", 
-      timeout: cdk.Duration.seconds(30),
-      environment: {
-        eventSqsUrl: queueS3event.queueUrl,
-        invokationSqsUrl: queueInvokation.queueUrl,
-        capacity: '100' // the capable capacity per operation by the scheduler 
-      }
-    }); 
-    queueS3event.grantConsumeMessages(lambdaJSSchedular)
-    queueInvokation.grantSendMessages(lambdaJSSchedular);
 
     // Lambda for schedular
     const lambdaSchedular = new lambda.Function(this, `lambda-schedular-${projectName}`, {
@@ -133,11 +120,11 @@ export class CdkLoadManagerStack extends cdk.Stack {
     queueInvokation.grantSendMessages(lambdaSchedular); // permision for Invokation SQS 
 
     // cron job - EventBridge
-    /*const rule = new events.Rule(this, `EventBridge-${projectName}`, {
+    const rule = new events.Rule(this, `EventBridge-${projectName}`, {
       description: "rule-of-event-bridge",
       schedule: events.Schedule.expression('rate(1 minute)'),
     }); 
-    rule.addTarget(new targets.LambdaFunction(lambdaSchedular)); */
+    rule.addTarget(new targets.LambdaFunction(lambdaSchedular)); 
 
     // Lambda - Invoke
     const lambdaInvoke = new lambda.Function(this, `lambda-invoke-for-${projectName}`, {
