@@ -106,7 +106,7 @@ export class CdkLoadManagerStack extends cdk.Stack {
     const lambdaJSSchedular = new lambda.Function(this, "LambdaForSchedular", {
       description: 'scheduling events',
       runtime: lambda.Runtime.NODEJS_14_X, 
-      code: lambda.Code.fromAsset("../../lambda-for-event"), 
+      code: lambda.Code.fromAsset("../lambda-for-event"), 
       handler: "index.handler", 
       timeout: cdk.Duration.seconds(30),
       environment: {
