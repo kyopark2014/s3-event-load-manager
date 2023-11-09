@@ -45,7 +45,8 @@ export class CdkLoadManagerStack extends cdk.Stack {
 
     // SQS for S3 event - Standard
     const queueS3event = new sqs.Queue(this, 'queueS3event', {
-      queueName: "queue-s3-putEvent"
+      queueName: "queue-s3-putEvent",
+      visibilityTimeout: cdk.Duration.seconds(120),
     });
     if (debug) {
       new cdk.CfnOutput(this, 'sqsS3PutEventUrl', {
