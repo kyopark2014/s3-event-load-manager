@@ -9,7 +9,6 @@ import * as logs from "aws-cdk-lib/aws-logs"
 import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
 import * as events from 'aws-cdk-lib/aws-events';
 import * as targets from 'aws-cdk-lib/aws-events-targets';
-import * as iam from 'aws-cdk-lib/aws-iam';
 
 const debug = false;
 const projectName = "s3-event-manager"

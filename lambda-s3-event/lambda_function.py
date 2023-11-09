@@ -3,7 +3,6 @@ import boto3
 import os
 import datetime
 import uuid
-import traceback
 
 sqs_client = boto3.client('sqs')
 sqsUrl = os.environ.get('queueS3event')
