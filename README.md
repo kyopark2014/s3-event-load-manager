@@ -1,6 +1,6 @@
 # S3의 Object 부하를 제어하는 Simple Load Manager
 
-여기서는 S3를 통해 들어오는 다수의 트래픽의 로드를 분산하기 위한 간단한 Load Manager를 보여주고자 합니다. 이때의 전체적인 Architecture는 아래와 같습니다. 여기서 
+여기서는 S3를 통해 들어오는 다수의 트래픽의 로드를 분산하기 위한 간단한 Load Manager를 보여주고자 합니다. 이때의 전체적인 Architecture는 아래와 같습니다. 여기서 EventBridge는 일정시간 간격으로 Load Mananaging을 수행하는 Lambda를 호출합니다. Lambda는 SQS에서 처리가능한 수량의 Event를 가져와서 Serving을 위한 SQS에 옮겨 놓습니다. Serving SQS르 들어온 Event은 Step Functions에 순차적으로 전달됩니다.
 
 <img width="806" alt="image" src="https://github.com/kyopark2014/s3-event-load-manager/assets/52392004/81efa92b-ac45-404b-8fd4-f24d61987341">
 
