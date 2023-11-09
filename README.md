@@ -35,7 +35,7 @@ Load Manager를 사용하지 않은 일반적은 경우의 트래픽 처리는 �
 
 ## Load Manager를 사용하는 경우
 
-### S3의 Event 처리 
+### S3 Event의 처리 
 
 [Lambda (S3-event)](./lambda-s3-event/lambda_function.py) 는 S3에 Object가 생성될때 발생하는 S3 put Evnet를 받아서 SQS(S3-event)에 저장합니다. 
 
